@@ -8,7 +8,6 @@ import net.technearts.pipe.pipe.Model
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.extensions.InjectionExtension
 import org.eclipse.xtext.testing.util.ParseHelper
-import org.junit.Ignore
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.^extension.ExtendWith
@@ -19,14 +18,13 @@ class PipeParsingTest {
 	@Inject
 	ParseHelper<Model> parseHelper
 	
-	@Test @Ignore
+	@Test
 	def void loadModel() {
 		val result = parseHelper.parse('''
-		/*
-			vetor1: [1, 2, 3]
-			mapa1: {a: 1, b: 2, c: 3}
-		*/
-		var a = 1
+		test: 3 + 4 / 5
+		1 + 1 >> ?: + 1
+		3
+		[1 2 3]
 		''')
 		Assertions.assertNotNull(result)
 		val errors = result.eResource.errors

@@ -10,93 +10,78 @@ AbstractElements:
 	Variable | EvalExpression;
 
 EvalExpression:
-	expressions+=Expression ('|' expressions+=Expression)*;
+	expression=Expression;
 
 Variable:
-	name=ID ':' expression=Expression;
+	name=ID ATTR expression=Expression;
 
 Expression:
-	Or;
+	Piping;
+
+Piping returns Expression:
+	Or ({Pipe.left=current} PIPE right=Or)*;
 
 Or returns Expression:
-	And ({Or.left=current} "||" right=And)*;
+	And ({Or.left=current} _OR_ right=And)*;
 
 And returns Expression:
-	Equality ({And.left=current} "&&" right=Equality)*;
+	Equality ({And.left=current} _AND_ right=Equality)*;
 
 Equality returns Expression:
-	Comparison ({Equality.left=current} op=('==' | '!=') right=Comparison)*;
+	Comparison ({Equality.left=current} op=(_EQ_ | _NE_) right=Comparison)*;
 
 Comparison returns Expression:
 	PlusOrMinus ({Comparison.left=current} op=(">=" | "<=" | ">" | "<") right=PlusOrMinus)*;
 
 PlusOrMinus returns Expression:
-	MulOrDiv (({Plus.left=current} '+' | {Minus.left=current}) right=MulOrDiv);
+	MulOrDiv (({Plus.left=current} '+' | {Minus.left=current} '-') right=MulOrDiv)*;
 
 MulOrDiv returns Expression:
 	Primary (({MulOrDiv.left=current} op=('*' | '/')) right=Primary)*;
 
 Primary returns Expression:
-	'(' Expression ')' | {Not} "!" expression=Atomic | Atomic;
+	'(' Expression ')' | {Not} "!" expression=Atomic | Atomic | {Array} '[' values+=Expression* ']';
 
 Atomic returns Expression:
-	IntConstant | StringConstant | BoolConstant | VariableRef;
+	NumberConstant | StringConstant | BoolConstant | VariableRef | PatternMatch;
+
+PatternMatch:
+	pattern=('?:' | ':?' | '?:?');
 
 VariableRef:
 	variable=[Variable];
 
-IntConstant:
-	value=INT;
+NumberConstant:
+	value=NUMBER;
 
 StringConstant:
 	value=STRING;
 
 BoolConstant:
 	value=('true' | 'false');
-	/*
-Model:
-	exps+=Exp*;
 
-Exp:
-	Pipe | Pair;
+terminal ATTR:
+	':';
 
-Pair:
-	PairId | PairNumber | PairString | PairArray | PairMap | PairPipe;
+terminal PIPE:
+	'>>';
 
-PairId:
-	key=ID ':' value=ID;
+terminal _OR_:
+	'||';
 
-PairNumber:
-	key=ID ':' value=NUMBER;
+terminal _AND_:
+	'&&';
 
-PairString:
-	key=ID ':' value=STRING;
+terminal _EQ_:
+	'==';
 
-PairArray:
-	key=ID ':' value=Array;
+terminal _NE_:
+	'!=';
 
-PairMap:
-	key=ID ':' value=Map;
-
-PairPipe:
-	key=ID ':' value=Pipe;
-
-Literal:
-	{Literal} ID | {Literal} NUMBER | {Literal} STRING | Array | Map;
-
-Pipe:
-	values+=Literal ('|' values+=Literal)*;
-
-Array:
-	{Array} '[' values+=(Literal)* ']';
-
-Map:
-	{Map} '{' values+=(Pair)* '}';
-*/
 terminal ID:
 	'^'? ('a'..'z' | 'A'..'Z' | '_') ('a'..'z' | 'A'..'Z' | '_' | '0'..'9')*;
 
-terminal INT returns ecore::EInt:
+terminal NUMBER returns ecore::EBigDecimal:
 	('0'..'9')+ ('.' ('0'..'9')+)?;
 
 terminal STRING:
