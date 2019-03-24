@@ -89,3 +89,8 @@ bower_components
 .idea
 /.apt_generated_tests/
 
+# xtext
+src-gen/
+xtend-gen/
+generated/
+
