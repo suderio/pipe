@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Automatic-Module-Name: net.technearts.pipe.tests
+Bundle-ManifestVersion: 2
+Bundle-Name: net.technearts.pipe.tests
+Bundle-Vendor: My Company
+Bundle-Version: 1.0.0.qualifier
+Bundle-SymbolicName: net.technearts.pipe.tests; singleton:=true
+Bundle-ActivationPolicy: lazy
+Require-Bundle: net.technearts.pipe,
+ org.junit.jupiter.api;bundle-version="[5.0.0,6.0.0)",
+ org.eclipse.xtext.testing,
+ org.eclipse.xtext.xbase.testing,
+ org.eclipse.xtext.xbase.lib;bundle-version="2.14.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-10
+Export-Package: net.technearts.pipe.tests;x-internal=true

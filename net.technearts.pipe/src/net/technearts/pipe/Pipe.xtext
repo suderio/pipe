@@ -1,0 +1,117 @@
+grammar net.technearts.pipe.Pipe hidden(WS, ML_COMMENT, SL_COMMENT)
+
+import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+generate pipe "http://www.technearts.net/pipe/Pipe"
+
+Model:
+	elements+=AbstractElements*;
+
+AbstractElements:
+	Variable | EvalExpression;
+
+EvalExpression:
+	expressions+=Expression ('|' expressions+=Expression)*;
+
+Variable:
+	name=ID ':' expression=Expression;
+
+Expression:
+	Or;
+
+Or returns Expression:
+	And ({Or.left=current} "||" right=And)*;
+
+And returns Expression:
+	Equality ({And.left=current} "&&" right=Equality)*;
+
+Equality returns Expression:
+	Comparison ({Equality.left=current} op=('==' | '!=') right=Comparison)*;
+
+Comparison returns Expression:
+	PlusOrMinus ({Comparison.left=current} op=(">=" | "<=" | ">" | "<") right=PlusOrMinus)*;
+
+PlusOrMinus returns Expression:
+	MulOrDiv (({Plus.left=current} '+' | {Minus.left=current}) right=MulOrDiv);
+
+MulOrDiv returns Expression:
+	Primary (({MulOrDiv.left=current} op=('*' | '/')) right=Primary)*;
+
+Primary returns Expression:
+	'(' Expression ')' | {Not} "!" expression=Atomic | Atomic;
+
+Atomic returns Expression:
+	IntConstant | StringConstant | BoolConstant | VariableRef;
+
+VariableRef:
+	variable=[Variable];
+
+IntConstant:
+	value=INT;
+
+StringConstant:
+	value=STRING;
+
+BoolConstant:
+	value=('true' | 'false');
+	/*
+Model:
+	exps+=Exp*;
+
+Exp:
+	Pipe | Pair;
+
+Pair:
+	PairId | PairNumber | PairString | PairArray | PairMap | PairPipe;
+
+PairId:
+	key=ID ':' value=ID;
+
+PairNumber:
+	key=ID ':' value=NUMBER;
+
+PairString:
+	key=ID ':' value=STRING;
+
+PairArray:
+	key=ID ':' value=Array;
+
+PairMap:
+	key=ID ':' value=Map;
+
+PairPipe:
+	key=ID ':' value=Pipe;
+
+Literal:
+	{Literal} ID | {Literal} NUMBER | {Literal} STRING | Array | Map;
+
+Pipe:
+	values+=Literal ('|' values+=Literal)*;
+
+Array:
+	{Array} '[' values+=(Literal)* ']';
+
+Map:
+	{Map} '{' values+=(Pair)* '}';
+*/
+terminal ID:
+	'^'? ('a'..'z' | 'A'..'Z' | '_') ('a'..'z' | 'A'..'Z' | '_' | '0'..'9')*;
+
+terminal INT returns ecore::EInt:
+	('0'..'9')+ ('.' ('0'..'9')+)?;
+
+terminal STRING:
+	'"' ('\\' . /* 'b'|'t'|'n'|'f'|'r'|'u'|'"'|"'"|'\\' */ | !('\\' | '"'))* '"' |
+	"'" ('\\' . /* 'b'|'t'|'n'|'f'|'r'|'u'|'"'|"'"|'\\' */ | !('\\' | "'"))* "'";
+
+terminal ML_COMMENT:
+	'/*'->'*/';
+
+terminal SL_COMMENT:
+	'//' !('\n' | '\r')* ('\r'? '\n')?;
+
+terminal WS:
+	(' ' | '\t' | '\r' | '\n')+;
+
+terminal ANY_OTHER:
+	.;
+
