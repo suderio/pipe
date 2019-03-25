@@ -26,5 +26,6 @@ Export-Package: net.technearts.pipe.pipe.impl,
  net.technearts.pipe.serializer,
  net.technearts.pipe.scoping,
  net.technearts.pipe,
- net.technearts.pipe.validation
+ net.technearts.pipe.validation,
+ net.technearts.pipe.formatting2
 Import-Package: org.apache.log4j

@@ -11,23 +11,33 @@ import org.eclipse.xtext.testing.util.ParseHelper
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.^extension.ExtendWith
+import org.eclipse.xtext.testing.validation.ValidationTestHelper
 
 @ExtendWith(InjectionExtension)
 @InjectWith(PipeInjectorProvider)
 class PipeParsingTest {
-	@Inject
-	ParseHelper<Model> parseHelper
+	@Inject extension ParseHelper<Model>
+	@Inject extension ValidationTestHelper
 	
 	@Test
-	def void loadModel() {
-		val result = parseHelper.parse('''
-		test: 3 + 4 / 5
-		1 + 1 >> ?: + 1
-		3
-		[1 2 3]
-		''')
+	def void loadBasicModel() {
+		val result = '''
+			test: 3 + 4 / 5
+			1 + 1 >> ?: + 1
+			3
+			[1 2 3]
+			x: {a: 2 b: 8 + 2 c: [1 2]}
+			[0 1 2] >> x >> test >> 3
+		'''.parse
 		Assertions.assertNotNull(result)
 		val errors = result.eResource.errors
 		Assertions.assertTrue(errors.isEmpty, '''Unexpected errors: «errors.join(", ")»''')
+	}
+	
+	@Test
+	def void loadAnotherBasicModel() {
+		'''
+		{a: 1 b: [] c: true} >> :? + 1
+		'''.parse.assertNoErrors
 	}
 }

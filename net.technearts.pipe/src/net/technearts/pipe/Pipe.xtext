@@ -4,9 +4,9 @@ import "http://www.eclipse.org/emf/2002/Ecore" as ecore
 generate pipe "http://www.technearts.net/pipe/Pipe"
 
 Model:
-	elements+=AbstractElements*;
+	elements+=AbstractElement*;
 
-AbstractElements:
+AbstractElement:
 	Variable | EvalExpression;
 
 EvalExpression:
@@ -31,7 +31,7 @@ Equality returns Expression:
 	Comparison ({Equality.left=current} op=(_EQ_ | _NE_) right=Comparison)*;
 
 Comparison returns Expression:
-	PlusOrMinus ({Comparison.left=current} op=(">=" | "<=" | ">" | "<") right=PlusOrMinus)*;
+	PlusOrMinus ({Comparison.left=current} op=(_GT_ | _LT_ | _GE_ | _LE_) right=PlusOrMinus)*;
 
 PlusOrMinus returns Expression:
 	MulOrDiv (({Plus.left=current} '+' | {Minus.left=current} '-') right=MulOrDiv)*;
@@ -40,7 +40,8 @@ MulOrDiv returns Expression:
 	Primary (({MulOrDiv.left=current} op=('*' | '/')) right=Primary)*;
 
 Primary returns Expression:
-	'(' Expression ')' | {Not} "!" expression=Atomic | Atomic | {Array} '[' values+=Expression* ']';
+	'(' Expression ')' | {Not} "!" expression=Atomic | Atomic | {Array} '[' values+=Expression* ']' | {Map} '{' (key+=ID
+	ATTR value+=Expression)* '}';
 
 Atomic returns Expression:
 	NumberConstant | StringConstant | BoolConstant | VariableRef | PatternMatch;
@@ -77,6 +78,18 @@ terminal _EQ_:
 
 terminal _NE_:
 	'!=';
+
+terminal _LE_:
+	'<=';
+
+terminal _LT_:
+	'<';
+
+terminal _GE_:
+	'>=';
+
+terminal _GT_:
+	'>';
 
 terminal ID:
 	'^'? ('a'..'z' | 'A'..'Z' | '_') ('a'..'z' | 'A'..'Z' | '_' | '0'..'9')*;
