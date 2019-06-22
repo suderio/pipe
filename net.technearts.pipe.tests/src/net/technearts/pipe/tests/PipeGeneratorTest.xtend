@@ -22,7 +22,7 @@ class PipeGeneratorTest {
 		'''
 			a: 1
 		'''.assertCompilesTo('''
-			element
+
 		''')
 	}
 }
