@@ -40,8 +40,12 @@ MulOrDiv returns Expression:
 	Primary (({MulOrDiv.left=current} op=('*' | '/')) right=Primary)*;
 
 Primary returns Expression:
-	'(' Expression ')' | {Not} "!" expression=Atomic | Atomic | {Array} '[' values+=Expression* ']' | {Map} '{' (key+=ID
-	ATTR value+=Expression)* '}';
+	'(' Expression ')' | 
+	{Not} "!" expression=Atomic | 
+	Atomic | 
+	{Array} '[' values+=Expression* ']' | 
+	{Map} '{' (key+=ID ATTR value+=Expression)* '}' |
+	{Map} '{' (key+=STRING ATTR value+=Expression)* '}';
 
 Atomic returns Expression:
 	NumberConstant | StringConstant | BoolConstant | VariableRef | PatternMatch;
@@ -112,4 +116,3 @@ terminal WS:
 
 terminal ANY_OTHER:
 	.;
-
