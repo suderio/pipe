@@ -12,6 +12,9 @@ Workflow {
 			project = StandardProjectConfig {
 				baseName = "net.technearts.pipe"
 				rootPath = rootPath
+				runtime = {
+					enabled = true
+				}
 				runtimeTest = {
 					enabled = true
 				}
@@ -42,7 +45,7 @@ Workflow {
 				generateStub = false
 			}
 			validator = {
-				composedCheck = "org.eclipse.xtext.validation.NamesAreUniqueValidator"
+				// composedCheck = "org.eclipse.xtext.validation.NamesAreUniqueValidator"
 				// Generates checks for @Deprecated grammar annotations, an IssueProvider and a corresponding PropertyPage
 				generateDeprecationValidation = true
 			}
@@ -52,6 +55,10 @@ Workflow {
 			}
 			junitSupport = {
 				junitVersion = "5"
+			}
+			projectWizard = {
+				generate = true
+				pluginProject = true
 			}
 		}
 	}

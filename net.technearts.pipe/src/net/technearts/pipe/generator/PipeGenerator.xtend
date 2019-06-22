@@ -7,6 +7,7 @@ import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.AbstractGenerator
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGeneratorContext
+import net.technearts.pipe.pipe.Model
 
 /**
  * Generates code from your model files on save.
@@ -16,10 +17,16 @@ import org.eclipse.xtext.generator.IGeneratorContext
 class PipeGenerator extends AbstractGenerator {
 
 	override void doGenerate(Resource resource, IFileSystemAccess2 fsa, IGeneratorContext context) {
-//		fsa.generateFile('greetings.txt', 'People to greet: ' + 
-//			resource.allContents
-//				.filter(Greeting)
-//				.map[name]
-//				.join(', '))
+		for (e: resource.allContents.toIterable.filter(Model)) {
+			val name = resource.URI.lastSegment.subSequence(0, resource.URI.lastSegment.length - 5)
+			fsa.generateFile(name + ".java", e.compile)
+		}
 	}
+	
+	def CharSequence compile(Model model)'''
+	«FOR e : model.elements»
+	
+	«ENDFOR»
+	'''
+	
 }

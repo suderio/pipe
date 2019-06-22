@@ -3,6 +3,13 @@
  */
 package net.technearts.pipe.ui.outline
 
+import net.technearts.pipe.pipe.BoolConstant
+import net.technearts.pipe.pipe.FileConstant
+import net.technearts.pipe.pipe.NumberConstant
+import net.technearts.pipe.pipe.PatternMatch
+import net.technearts.pipe.pipe.ReferenceWord
+import net.technearts.pipe.pipe.StringConstant
+import net.technearts.pipe.pipe.VariableRef
 import org.eclipse.xtext.ui.editor.outline.impl.DefaultOutlineTreeProvider
 
 /**
@@ -11,5 +18,11 @@ import org.eclipse.xtext.ui.editor.outline.impl.DefaultOutlineTreeProvider
  * See https://www.eclipse.org/Xtext/documentation/310_eclipse_support.html#outline
  */
 class PipeOutlineTreeProvider extends DefaultOutlineTreeProvider {
-
+	def _isLeaf(PatternMatch e) { true }
+	def _isLeaf(BoolConstant e) { true }
+	def _isLeaf(NumberConstant e) { true }
+	def _isLeaf(VariableRef e) { true }
+	def _isLeaf(FileConstant e) { true }
+	def _isLeaf(StringConstant e) { true }
+	def _isLeaf(ReferenceWord e) { true }
 }

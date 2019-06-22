@@ -23,28 +23,28 @@ class PipeParsingTest {
 	def void loadBasicModel() {
 		val result = '''
 			test: 3 + 4 / 5
-			1 + 1 >> ?: + 1
+			1 + 1 | ?: + 1
 			3
 			[1 2 3]
 			x: {a: 2 b: 8 + 2 c: [1 2]}
-			[0 1 2] >> x >> test >> 3
+			[0 1 2] | x | test | 3
 		'''.parse
 		Assertions.assertNotNull(result)
 		val errors = result.eResource.errors
-		Assertions.assertTrue(errors.isEmpty, '''Unexpected errors: «errors.join(", ")»''')
+		Assertions.assertTrue(errors.isEmpty, '''Unexpected errors: Â«errors.join(", ")Â»''')
 	}
 	
 	@Test
 	def void loadAnotherBasicModel() {
 		'''
-		{a: 1 b: [] c: true} >> :? + 1
+		{a: 1 b: [] c: true} | :? + 1
 		'''.parse.assertNoErrors
 	}
 	
 	@Test
 	def void testStringKeys() {
 		'''
-		{"a": 1 'b': [] '3': true} >> :? + 1
+		{"a": 1 'b': [] '3': true} |> :? + 1
 		'''.parse.assertNoErrors
 	}
 	
@@ -55,6 +55,33 @@ class PipeParsingTest {
 		'test'
 		a: "test"
 		b: 'test'
+		'''.parse.assertNoErrors
+	}
+	
+	@Test
+	def void testFilenames() {
+		'''
+		\\c\test\filename
+		\\bin\filename.txt
+		\\some.dir\somefile.ext
+		\\a\b_c_d\f.g
+		\\.\xpto
+		\\..\..\..\xpto
+		'''.parse.assertNoErrors
+	}
+	
+	@Test
+	def void testFunction() {
+		'''
+		fac: {0: 1 1: 1 nil: (? - 1 | this) * ?}
+		'''.parse.assertNoErrors
+	}
+	
+	@Test
+	def void testDuplicateNames() {
+		'''
+		a: 0
+		a: 1
 		'''.parse.assertNoErrors
 	}
 }

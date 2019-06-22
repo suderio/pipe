@@ -40,14 +40,20 @@ MulOrDiv returns Expression:
 	Primary (({MulOrDiv.left=current} op=('*' | '/')) right=Primary)*;
 
 Primary returns Expression:
-	'(' Expression ')' | 
-	{Not} "!" expression=Atomic | 
-	Atomic | 
-	{Array} '[' values+=Expression* ']' | 
+	'(' Expression ')' |
+	{Not} "!" expression=Atomic |
+	Atomic |
+	{Array} '[' values+=Expression* ']' |
 	{Map} '{' (key+=Key ATTR value+=Expression)* '}';
 
 Atomic returns Expression:
-	NumberConstant | StringConstant | BoolConstant | VariableRef | PatternMatch;
+	ReferenceWord |
+	NumberConstant |
+	StringConstant |
+	BoolConstant |
+	VariableRef |
+	PatternMatch |
+	FileConstant;
 
 PatternMatch:
 	pattern=('?:' | ':?' | '?:?' | '?');
@@ -58,49 +64,56 @@ VariableRef:
 NumberConstant:
 	value=NUMBER;
 
+FileConstant:
+	value=FILE;
+
 StringConstant:
 	value=STRING;
 
 BoolConstant:
 	value=BOOLEAN;
-	
-Key: 
-	ID | STRING | NUMBER | BOOLEAN
-;
+
+ReferenceWord:
+	value=REFERENCE;
+
+Key:
+	ID | STRING | NUMBER | BOOLEAN;
+
+terminal REFERENCE:
+	'this' | 'import';
 
 terminal ATTR:
 	':';
 
-terminal PIPE:
-	'>>';
-
 terminal _OR_:
-	'||';
+	'||' | 'or';
 
 terminal _AND_:
-	'&&';
+	'&&' | 'and';
 
 terminal _EQ_:
-	'==';
+	'==' | 'eq';
 
 terminal _NE_:
-	'!=';
+	'!=' | '<>' | 'ne';
 
 terminal _LE_:
-	'<=';
+	'<=' | 'le';
 
 terminal _LT_:
-	'<';
+	'<' | 'lt';
 
 terminal _GE_:
-	'>=';
+	'>=' | 'ge';
 
 terminal _GT_:
-	'>';
+	'>' | 'gt';
 
 terminal BOOLEAN:
-	'true' | 'false'
-;
+	'true' | 'false';
+
+terminal PIPE:
+	'|' | '|>';
 
 terminal ID:
 	'^'? ('a'..'z' | 'A'..'Z' | '_') ('a'..'z' | 'A'..'Z' | '_' | '0'..'9')*;
@@ -108,10 +121,13 @@ terminal ID:
 terminal NUMBER returns ecore::EBigDecimal:
 	('0'..'9')+ ('.' ('0'..'9')+)?;
 
+terminal FILE:
+	'\\\\' ('a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '.')+ ('\\' ('a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '.')+)*;
+
 terminal STRING:
 	'"' ('\\' . /* 'b'|'t'|'n'|'f'|'r'|'u'|'"'|"'"|'\\' */ | !('\\' | '"'))* '"' |
 	"'" ('\\' . /* 'b'|'t'|'n'|'f'|'r'|'u'|'"'|"'"|'\\' */ | !('\\' | "'"))* "'";
-	
+
 terminal ML_COMMENT:
 	'/*'->'*/';
 

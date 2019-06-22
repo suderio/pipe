@@ -3,23 +3,31 @@
  */
 package net.technearts.pipe.validation
 
+import java.io.File
+import net.technearts.pipe.pipe.FileConstant
+import org.eclipse.xtext.validation.Check
+import java.io.IOException
+import net.technearts.pipe.pipe.PipePackage
 
 /**
  * This class contains custom validation rules. 
- *
+ * 
  * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#validation
  */
 class PipeValidator extends AbstractPipeValidator {
-	
-//	public static val INVALID_NAME = 'invalidName'
-//
-//	@Check
-//	def checkGreetingStartsWithCapital(Greeting greeting) {
-//		if (!Character.isUpperCase(greeting.name.charAt(0))) {
-//			warning('Name should start with a capital', 
-//					PipePackage.Literals.GREETING__NAME,
-//					INVALID_NAME)
-//		}
-//	}
-	
+
+	public static val INVALID_FILE_NAME = 'InvalidFileName'
+
+	@Check
+	def checkFileName(FileConstant file) {
+		try {
+			new File(file.value)
+			return
+		} catch (IOException e) {
+			error('Invalid file name «file.value»', PipePackage.Literals.FILE_CONSTANT__VALUE, INVALID_FILE_NAME,
+				file.value)
+		}
+
+	}
+
 }

@@ -6,6 +6,8 @@ package net.technearts.pipe.ui.labeling
 import com.google.inject.Inject
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider
 import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider
+import net.technearts.pipe.pipe.NumberConstant
+import net.technearts.pipe.pipe.BoolConstant
 
 /**
  * Provides labels for EObjects.
@@ -18,7 +20,14 @@ class PipeLabelProvider extends DefaultEObjectLabelProvider {
 	new(AdapterFactoryLabelProvider delegate) {
 		super(delegate);
 	}
+	
+	def text(NumberConstant number) {
+		"Number " + number.value.toPlainString
+	}
 
+	def text(BoolConstant bool) {
+		"true".equals(bool.value) ? "TRUE" : "FALSE"
+	}
 	// Labels and icons can be computed like this:
 	
 //	def text(Greeting ele) {
