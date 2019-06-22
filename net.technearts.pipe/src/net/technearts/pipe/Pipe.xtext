@@ -34,7 +34,8 @@ Comparison returns Expression:
 	PlusOrMinus ({Comparison.left=current} op=(_GT_ | _LT_ | _GE_ | _LE_) right=PlusOrMinus)*;
 
 PlusOrMinus returns Expression:
-	MulOrDiv (({Plus.left=current} '+' | {Minus.left=current} '-') right=MulOrDiv)*;
+	//MulOrDiv (({Plus.left=current} '+' | {Minus.left=current} '-') right=MulOrDiv)*;
+	MulOrDiv(({PlusOrMinus.left=current} op=('+' | '-')) right=MulOrDiv)*;
 
 MulOrDiv returns Expression:
 	Primary (({MulOrDiv.left=current} op=('*' | '/')) right=Primary)*;
@@ -56,7 +57,7 @@ Atomic returns Expression:
 	FileConstant;
 
 PatternMatch:
-	pattern=('?:' | ':?' | '?:?' | '?');
+	pattern=('?:' | ':?' | '?:?' | '?' | ID_PATTERN);
 
 VariableRef:
 	variable=[Variable];
@@ -117,6 +118,10 @@ terminal PIPE:
 
 terminal ID:
 	'^'? ('a'..'z' | 'A'..'Z' | '_') ('a'..'z' | 'A'..'Z' | '_' | '0'..'9')*;
+	
+terminal ID_PATTERN:
+	'?' '^'? ('a'..'z' | 'A'..'Z' | '_') ('a'..'z' | 'A'..'Z' | '_' | '0'..'9')*|
+	'^'? ('a'..'z' | 'A'..'Z' | '_') ('a'..'z' | 'A'..'Z' | '_' | '0'..'9')*'?';
 
 terminal NUMBER returns ecore::EBigDecimal:
 	('0'..'9')+ ('.' ('0'..'9')+)?;
