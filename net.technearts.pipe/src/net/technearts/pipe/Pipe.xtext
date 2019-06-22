@@ -44,14 +44,13 @@ Primary returns Expression:
 	{Not} "!" expression=Atomic | 
 	Atomic | 
 	{Array} '[' values+=Expression* ']' | 
-	{Map} '{' (key+=ID ATTR value+=Expression)* '}' |
-	{Map} '{' (key+=STRING ATTR value+=Expression)* '}';
+	{Map} '{' (key+=Key ATTR value+=Expression)* '}';
 
 Atomic returns Expression:
 	NumberConstant | StringConstant | BoolConstant | VariableRef | PatternMatch;
 
 PatternMatch:
-	pattern=('?:' | ':?' | '?:?');
+	pattern=('?:' | ':?' | '?:?' | '?');
 
 VariableRef:
 	variable=[Variable];
@@ -63,7 +62,11 @@ StringConstant:
 	value=STRING;
 
 BoolConstant:
-	value=('true' | 'false');
+	value=BOOLEAN;
+	
+Key: 
+	ID | STRING | NUMBER | BOOLEAN
+;
 
 terminal ATTR:
 	':';
@@ -95,6 +98,10 @@ terminal _GE_:
 terminal _GT_:
 	'>';
 
+terminal BOOLEAN:
+	'true' | 'false'
+;
+
 terminal ID:
 	'^'? ('a'..'z' | 'A'..'Z' | '_') ('a'..'z' | 'A'..'Z' | '_' | '0'..'9')*;
 
@@ -104,7 +111,7 @@ terminal NUMBER returns ecore::EBigDecimal:
 terminal STRING:
 	'"' ('\\' . /* 'b'|'t'|'n'|'f'|'r'|'u'|'"'|"'"|'\\' */ | !('\\' | '"'))* '"' |
 	"'" ('\\' . /* 'b'|'t'|'n'|'f'|'r'|'u'|'"'|"'"|'\\' */ | !('\\' | "'"))* "'";
-
+	
 terminal ML_COMMENT:
 	'/*'->'*/';
 
